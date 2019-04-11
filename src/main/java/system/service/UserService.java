@@ -12,7 +12,19 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
-    public List getAllUsers() {
-        return userDao.getAllUsers();
+    public String update(){
+        return userDao.usersUpdate();
+    }
+
+    public String add(String data){
+        return userDao.addUserToDB(data);
+    }
+
+    public String delete(String data){
+        return userDao.deleteUserFromDB(data);
+    }
+
+    public String updateData(String data){
+        return userDao.updateUserdataToDB(data);
     }
 }

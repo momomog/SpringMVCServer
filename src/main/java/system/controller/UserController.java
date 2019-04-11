@@ -2,49 +2,50 @@ package system.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import system.model.User;
 import system.service.UserService;
 
-
-import java.util.List;
-
 @Controller
-@RequestMapping("/users")
+@RequestMapping(value = "/users", produces = "text/plain;charset=UTF-8")
+@CrossOrigin(origins = "http://localhost:1841")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public @ResponseBody List<User> getAllUsers(){
-        return userService.getAllUsers();
-    }
-
-    @RequestMapping(value = "/validate", method = RequestMethod.GET)
-    public ModelAndView validateUser(){
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("userFromServer", new User());
-        modelAndView.setViewName("user_check_page");
-        return modelAndView;
-    }
-
-
-//    @RequestMapping(value = "/check", method = RequestMethod.POST)
-//    public @ResponseBody String checkUser(@ModelAttribute("userFromServer") User user){
-//        if("admin".equals(user.getName()) &&  "admin".equals(user.getPassword())){
-//            return "valid";
-//        }
-//        return "invalid";
-//    }
-    @CrossOrigin(origins = "http://localhost:1841")
-    @RequestMapping("/check")
+    @RequestMapping(value = "/update")
     @ResponseBody
-    public String check() {
+    public String updateUser() {
+        System.out.println("____");
+        System.out.println(userService.update());
+        System.out.println("____");
+        return userService.update();
+    }
 
-            return "{\"sucess\": \"true\", \"text\":\"blabla\"}";
+    @RequestMapping("/add")
+    @ResponseBody
+    public String addUser(@RequestParam String data) {
+        System.out.println("____");
+        System.out.println(userService.add(data));
+        System.out.println("____");
+        return userService.add(data);
+    }
 
+    @RequestMapping("/delete")
+    @ResponseBody
+    public String deleteUser(@RequestParam String data) {
+        System.out.println("____");
+        System.out.println(userService.delete(data));
+        System.out.println("____");
+        return userService.delete(data);
+    }
+
+    @RequestMapping("/updateData")
+    @ResponseBody
+    public String updateUserData(@RequestParam String data) {
+        System.out.println("____");
+        System.out.println(userService.updateData(data));
+        System.out.println("____");
+        return userService.updateData(data);
     }
 }

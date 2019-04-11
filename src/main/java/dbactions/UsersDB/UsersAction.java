@@ -1,20 +1,18 @@
-package system.dao;
+package UsersDB;
 
-
+import dbactions.JsonParser.DataForServlet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dbactions.DbConnectData;
-import dbactions.JsonParser.DataForServlet;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("all")
-@Repository
-public class UserDao implements DbConnectData {
-
+public class UsersAction {
+    private String login = "postgres";
+    private String password = "1234";
+    private String url = "jdbc:postgresql://localhost:5432/postgres";
     private Connection connection = null;
     private StringBuilder sb = null;
     private DataForServlet dfs;
@@ -23,8 +21,8 @@ public class UserDao implements DbConnectData {
 
     {
         try {
-            Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(url, login, password);
+            Class.forName("org.postgresql.Driver");
             dfs = new DataForServlet();
             mapper = new ObjectMapper();
             map = new HashMap<>();
@@ -34,9 +32,9 @@ public class UserDao implements DbConnectData {
         }
     }
 
-    public String usersUpdate() throws NullPointerException {
+    public String usersUpdate(String data) throws NullPointerException {
         try {
-            //dfs.dataInitilization(data);
+            dfs.dataInitilization(data);
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users ORDER BY id");
             ResultSet resultSet = preparedStatement.executeQuery();
             sb.append("{\"users\":[");
@@ -50,7 +48,7 @@ public class UserDao implements DbConnectData {
             }
             sb.setLength(sb.length() - 1);
             sb.append("], \"success\": true,\"message\": \"Данные обновлены!\" }");
-           connection.close();
+            connection.close();
         } catch (SQLException | JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -128,5 +126,4 @@ public class UserDao implements DbConnectData {
         }
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
-
 }
