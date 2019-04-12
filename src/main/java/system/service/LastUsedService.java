@@ -2,27 +2,27 @@ package system.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import system.dao.UserDao;
+import system.dao.LastUsedDao;
 
 @Service
-public class UserService {
+public class LastUsedService {
 
     @Autowired
-    private UserDao userDao;
+    private LastUsedDao lastUsedDao;
 
     public String update(){
-        return userDao.usersUpdate();
+        return lastUsedDao.usedsUpdate();
     }
 
     public String add(String data){
-        return userDao.addUserToDB(data);
+        return lastUsedDao.addUsedToDB(data);
     }
 
     public String delete(String data){
-        return userDao.deleteUserFromDB(data);
+        return lastUsedDao.deleteUsedFromDB(data);
     }
 
     public String updateData(String data){
-        return userDao.updateUserdataToDB(data);
+        return lastUsedDao.updateUseddataToDB(data);
     }
 }
