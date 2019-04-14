@@ -8,21 +8,21 @@ import system.dao.PersonalDao;
 public class PersonalService {
 
     @Autowired
-    PersonalDao personalDao;
+    private PersonalDao personalDao;
 
-    public String update(String data){
-        return personalDao.personalsUpdate(data);
+    public String update() {
+        return personalDao.update();
     }
 
-    public String add(String data){
-        return personalDao.addPersonalToDB(data);
+    public String save(String name, String technology, String skill, String used, String commentary) {
+        return personalDao.save(name, technology, skill, used, commentary);
     }
 
-    public String delete(String data){
-        return personalDao.deletePersonalFromDB(data);
+    public String delete(String id) {
+        return personalDao.delete(id);
     }
 
-    public String updateData(String data){
-        return personalDao.updatePersonaldataToDB(data);
+    public String updateData(String id, String technology, String skill, String used, String commentary) {
+        return personalDao.updateData(id, technology, skill, used, commentary);
     }
 }

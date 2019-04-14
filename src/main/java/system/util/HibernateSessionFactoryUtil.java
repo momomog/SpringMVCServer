@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import system.model.Technology;
+import system.model.*;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
@@ -13,23 +13,33 @@ public class HibernateSessionFactoryUtil {
     private HibernateSessionFactoryUtil() {
     }
 
-    public static Session getSession() {
+    public static SessionFactory getSession() {
         if (sessionFactory == null) {
             try {
-                if (session != null) {
-                    return sessionFactory.getCurrentSession();
-                }
                 Configuration configuration = new Configuration().configure();
                 configuration.addAnnotatedClass(Technology.class);
+                configuration.addAnnotatedClass(Skill.class);
+                configuration.addAnnotatedClass(LastUsed.class);
+                configuration.addAnnotatedClass(User.class);
+                configuration.addAnnotatedClass(Personal.class);
 
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
-                session = sessionFactory.openSession();
-
             } catch (Exception e) {
                 System.out.println("Исключение!" + e);
             }
         }
-        return session;
+        return sessionFactory;
+    }
+
+    public static Session getCurrentSession() {
+        if (session == null) {
+            return getSession().openSession();
+        }
+        return getSession().getCurrentSession();
+    }
+
+    public static Session getNewSession() {
+        return getSession().openSession();
     }
 }

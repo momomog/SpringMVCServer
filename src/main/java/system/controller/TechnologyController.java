@@ -10,7 +10,6 @@ import system.service.TechService;
 @Controller
 @RequestMapping(value = "/technologies", produces = "text/plain;charset=UTF-8")
 @CrossOrigin(origins = "http://localhost:1841")
-@SuppressWarnings("all")
 public class TechnologyController {
 
     @Autowired

@@ -2,16 +2,12 @@ package system.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import system.service.PersonalService;
 
 @Controller
 @RequestMapping(value = "/personals", produces = "text/plain;charset=UTF-8")
 @CrossOrigin(origins = "http://localhost:1841")
-@SuppressWarnings("all")
 public class PersonalController {
 
     @Autowired
@@ -19,25 +15,25 @@ public class PersonalController {
 
     @RequestMapping(value = "/update")
     @ResponseBody
-    public String updateUser(@RequestParam String data) {
-        return personalService.update(data);
+    public String updateTechnology() {
+        return personalService.update();
     }
 
     @RequestMapping("/add")
     @ResponseBody
-    public String addUser(@RequestParam String data) {
-        return personalService.add(data);
+    public String addTechnology(@RequestParam String name, String technology, String skill, String used, String commentary) {
+        return personalService.save(name, technology, skill, used, commentary);
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    public String deleteUser(@RequestParam String data) {
-        return personalService.delete(data);
+    public String deleteTechnology(@RequestParam String id) {
+        return personalService.delete(id);
     }
 
     @RequestMapping("/updateData")
     @ResponseBody
-    public String updateUserData(@RequestParam String data) {
-        return personalService.updateData(data);
+    public String updateTechnologyData(@RequestParam String id, String technology, String skill, String used, String commentary) {
+        return personalService.updateData(id, technology, skill, used, commentary);
     }
 }

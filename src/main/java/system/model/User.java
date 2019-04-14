@@ -2,12 +2,11 @@ package system.model;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 
 @Entity
-@Table(name = "technologies")
-public class Technology {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +17,21 @@ public class Technology {
     @Setter
     private String name;
 
-    public Technology() {
+    @Getter
+    @Setter
+    private String email;
+
+    @Getter
+    @Setter
+    private String phone;
+
+    public User (){
     }
 
-    public Technology(String name) {
+    public User(String name, String email, String phone) {
         this.name = name;
+        this.email = email;
+        this.phone = phone;
     }
 
 }

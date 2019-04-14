@@ -8,12 +8,13 @@ import org.springframework.stereotype.Repository;
 import system.model.Skill;
 import system.util.HibernateSessionFactoryUtil;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-//@SuppressWarnings("all")
+@SuppressWarnings("all")
 public class SkillDao {
     private Session session;
     private Transaction transaction;
@@ -22,7 +23,7 @@ public class SkillDao {
     private Skill skill;
 
     {
-        session = HibernateSessionFactoryUtil.getSession();
+        session = HibernateSessionFactoryUtil.getCurrentSession();
     }
 
     public String update() {
@@ -54,6 +55,7 @@ public class SkillDao {
         }
     }
 
+    //@Transactional
     public String save(Skill skillType, String name) {
         Transaction transaction = session.beginTransaction();
         List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
@@ -69,23 +71,24 @@ public class SkillDao {
 
         session.save(skillType);
         transaction.commit();
-        return "{\"success\": true,\"message\": \"Технология добавлена!\"}";
+        return "{\"success\": true,\"message\": \"Навык добавлен!\"}";
     }
 
     public String delete(String id) {
-
-        //необходима проверка занятности в результирующей таблице!
-
-        transaction = session.beginTransaction();
-        Skill skill = session.load(Skill.class, Integer.parseInt(id));
-        session.delete(skill);
-        transaction.commit();
-        return "{\"success\": true,\"message\": \"Технология удалена!\"}";
+        try {
+            transaction = session.beginTransaction();
+            Skill skill = session.load(Skill.class, Integer.parseInt(id));
+            session.delete(skill);
+            transaction.commit();
+        } catch (Exception e) {
+            return "{\"success\": false,\"message\": \"Вы не можете удалить данный навык, так как он используется в таблице знаний сотрудников!\"}";
+        }
+        return "{\"success\": true,\"message\": \"Навык удален!\"}";
     }
 
     public String updateData(String name, String id) {
         transaction = session.beginTransaction();
-        skill = (Skill) session.get(Skill.class, Integer.parseInt(id));
+        skill = session.get(Skill.class, Integer.parseInt(id));
         skill.setName(name);
         session.update(skill);
         transaction.commit();

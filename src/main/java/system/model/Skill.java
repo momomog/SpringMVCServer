@@ -1,5 +1,8 @@
 package system.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,9 +11,11 @@ public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private int id;
 
-    @Column (name = "name")
+    @Getter
+    @Setter
     private String name;
 
     public Skill(){
@@ -20,15 +25,5 @@ public class Skill {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

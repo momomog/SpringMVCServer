@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-//@SuppressWarnings("all")
+@SuppressWarnings("all")
 public class TechDao {
     private Session session;
     private Transaction transaction;
@@ -22,7 +22,7 @@ public class TechDao {
     private Technology tech;
 
     {
-        session = HibernateSessionFactoryUtil.getSession();
+        session = HibernateSessionFactoryUtil.getCurrentSession();
     }
 
     public String update() {
@@ -73,19 +73,20 @@ public class TechDao {
     }
 
     public String delete(String id) {
-
-        //необходима проверка занятности в результирующей таблице!
-
-        transaction = session.beginTransaction();
-        Technology technology = session.load(Technology.class, Integer.parseInt(id));
-        session.delete(technology);
-        transaction.commit();
+        try {
+            transaction = session.beginTransaction();
+            Technology technology = session.load(Technology.class, Integer.parseInt(id));
+            session.delete(technology);
+            transaction.commit();
+        } catch (Exception e) {
+            return "{\"success\": false,\"message\": \"Вы не можете удалить данную технологию, так как она используется в таблице знаний сотрудников!\"}";
+        }
         return "{\"success\": true,\"message\": \"Технология удалена!\"}";
     }
 
     public String updateData(String name, String id) {
         transaction = session.beginTransaction();
-        Technology technology = (Technology) session.get(Technology.class, Integer.parseInt(id));
+        Technology technology = session.get(Technology.class, Integer.parseInt(id));
         technology.setName(name);
         session.update(technology);
         transaction.commit();

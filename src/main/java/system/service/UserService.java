@@ -3,6 +3,7 @@ package system.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import system.dao.UserDao;
+import system.model.User;
 
 @Service
 public class UserService {
@@ -10,19 +11,20 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
-    public String update(){
-        return userDao.usersUpdate();
+    public String update() {
+        return userDao.update();
     }
 
-    public String add(String data){
-        return userDao.addUserToDB(data);
+    public String save(User user, String email, String phone) {
+        return userDao.save(user, email, phone);
     }
 
-    public String delete(String data){
-        return userDao.deleteUserFromDB(data);
+    public String delete(String id) {
+        return userDao.delete(id);
     }
 
-    public String updateData(String data){
-        return userDao.updateUserdataToDB(data);
+    public String updateData(String name, String email, String phone, String id) {
+        return userDao.updateData(name, email, phone, id);
     }
+
 }

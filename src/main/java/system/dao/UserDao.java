@@ -1,132 +1,105 @@
 package system.dao;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dbactions.DbConnectData;
-import dbactions.JsonParser.DataForServlet;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
+import system.model.Personal;
+import system.model.User;
+import system.util.HibernateSessionFactoryUtil;
 
-import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-@SuppressWarnings("all")
 @Repository
-public class UserDao implements DbConnectData {
-
-    private Connection connection = null;
-    private StringBuilder sb = null;
-    private DataForServlet dfs;
-    private ObjectMapper mapper = null;
-    private Map<String, String> map;
+public class UserDao {
+    private Session session;
+    private Transaction transaction;
+    private ObjectMapper mapper = new ObjectMapper();
+    private Map<String, String> map = new HashMap<>();
+    private User user;
 
     {
-        try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url, login, password);
-            dfs = new DataForServlet();
-            mapper = new ObjectMapper();
-            map = new HashMap<>();
-            sb = new StringBuilder();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        session = HibernateSessionFactoryUtil.getCurrentSession();
     }
 
-    public String usersUpdate() throws NullPointerException {
+    public String update() {
+        StringBuilder sb = new StringBuilder();
+        Transaction transaction = session.beginTransaction();
         try {
-            //dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("select * from users ORDER BY id");
-            ResultSet resultSet = preparedStatement.executeQuery();
+            List<User> users = (List<User>) session.createQuery("From User").list();
             sb.append("{\"users\":[");
-            while (resultSet.next()) {
-                map.put("id", String.valueOf(resultSet.getInt("id")));
-                map.put("name", resultSet.getString("name"));
-                map.put("email", resultSet.getString("email"));
-                map.put("phone", resultSet.getString("phone"));
+
+            for (User currentUser : users) {
+                user = currentUser;
+                map.put("id", String.valueOf(user.getId()));
+                map.put("name", user.getName());
+                map.put("email", user.getEmail());
+                map.put("phone", user.getPhone());
                 sb.append(mapper.writeValueAsString(map)).append(",");
                 map.clear();
             }
+
             sb.setLength(sb.length() - 1);
             sb.append("], \"success\": true,\"message\": \"Данные обновлены!\" }");
-           connection.close();
-        } catch (SQLException | JsonProcessingException e) {
+            transaction.commit();
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        if (sb.toString().contains("id")) {
+
+        if (sb.toString().contains("name")) {
             return sb.toString();
         } else {
             return "{\"success\": true,\"message\": \"Данные обновлены!\"}";
         }
     }
 
-    public String addUserToDB(String data) {
-        try {
-            dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("select email from users");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String emailFromDB = resultSet.getString("email");
-                if (dfs.getEmail().equals(emailFromDB)) {
-                    return "{\"success\": false,\"message\": \"Пользователь с данной почтой уже зарегестрирован!\"}";
-                }
+    public String save(User currUser, String email, String phone) {
+        Transaction transaction = session.beginTransaction();
+        List<User> users = (List<User>) session.createQuery("From User").list();
+
+        for (User currentUser : users) {
+            user = currentUser;
+
+            if (email.equals(user.getEmail())) {
+                transaction.commit();
+                return "{\"success\": false,\"message\": \"Пользователь с данной почтой уже зарегестрирован!\"}";
             }
 
-            preparedStatement = connection.prepareStatement("select phone from users");
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String phoneFromDB = resultSet.getString("phone");
-                if (dfs.getPhone().equals(phoneFromDB)) {
-                    return "{\"success\": false,\"message\": \"Пользователь с данным телефоном уже зарегестрирован!\"}";
-                }
+            if (phone.equals(user.getPhone())) {
+                transaction.commit();
+                return "{\"success\": false,\"message\": \"Пользователь с данным телефоном уже зарегестрирован!\"}";
             }
-
-            preparedStatement = connection.prepareStatement("insert into users (name, email, phone) VALUES (?, ?, ?)");
-            preparedStatement.setString(1, dfs.getName());
-            preparedStatement.setString(2, dfs.getEmail());
-            preparedStatement.setString(3, dfs.getPhone());
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
+        session.save(currUser);
+        transaction.commit();
         return "{\"success\": true,\"message\": \"Пользователь добавлен!\"}";
     }
 
-    public String deleteUserFromDB(String data) {
-        try {
-            dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from personal * where name = ?");
-            preparedStatement.setInt(1, dfs.getId());
-            preparedStatement.executeUpdate();
-
-            preparedStatement = connection.prepareStatement("delete from users * where id = ?");
-            preparedStatement.setInt(1, dfs.getId());
-            preparedStatement.executeUpdate();
-
-
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public String delete(String id) {
+        List<Personal> personals = (List<Personal>) session.createQuery("From Personal").list();
+        for (Personal personal : personals) {
+            if(personal.getName() == Integer.parseInt(id)){
+                session.delete(personal);
+            }
         }
+
+        transaction = session.beginTransaction();
+        User user = session.load(User.class, Integer.parseInt(id));
+        session.delete(user);
+        transaction.commit();
         return "{\"success\": true,\"message\": \"Пользователь удален!\"}";
     }
 
-    public String updateUserdataToDB(String data) {
-        try {
-            dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("update users set name = ?, email = ?, phone = ? where id = ?");
-            preparedStatement.setString(1, dfs.getName());
-            preparedStatement.setString(2, dfs.getEmail());
-            preparedStatement.setString(3, dfs.getPhone());
-            preparedStatement.setInt(4, dfs.getId());
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public String updateData(String name, String email, String phone, String id) {
+        transaction = session.beginTransaction();
+        User user = session.get(User.class, Integer.parseInt(id));
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhone(phone);
+        session.update(user);
+        transaction.commit();
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
-
 }

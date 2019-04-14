@@ -2,55 +2,50 @@ package system.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dbactions.DbConnectData;
-import dbactions.JsonParser.DataForServlet;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
+import system.model.LastUsed;
+import system.util.HibernateSessionFactoryUtil;
 
-import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-@SuppressWarnings("all")
 @Repository
-public class LastUsedDao implements DbConnectData {
-
-    private Connection connection = null;
-    private StringBuilder sb = null;
-    private DataForServlet dfs;
-    private ObjectMapper mapper = null;
-    private Map<String, String> map;
+@SuppressWarnings("all")
+public class LastUsedDao {
+    private Session session;
+    private Transaction transaction;
+    private ObjectMapper mapper = new ObjectMapper();
+    private Map<String, String> map = new HashMap<>();
+    private LastUsed lastUsed;
 
     {
-        try {
-            connection = DriverManager.getConnection(url, login, password);
-            Class.forName("org.postgresql.Driver");
-            dfs = new DataForServlet();
-            mapper = new ObjectMapper();
-            map = new HashMap<>();
-            sb = new StringBuilder();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        session = HibernateSessionFactoryUtil.getCurrentSession();
     }
 
-    public String usedsUpdate() throws NullPointerException {
+    public String update() {
+        StringBuilder sb = new StringBuilder();
+        Transaction transaction = session.beginTransaction();
         try {
-            //dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("select * from useds ORDER BY id");
-            ResultSet resultSet = preparedStatement.executeQuery();
+            List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed").list();
             sb.append("{\"useds\":[");
-            while (resultSet.next()) {
-                map.put("id", String.valueOf(resultSet.getInt("id")));
-                map.put("name", resultSet.getString("name"));
+
+            for (LastUsed interval : lastUseds) {
+                lastUsed = interval;
+                map.put("id", String.valueOf(lastUsed.getId()));
+                map.put("name", lastUsed.getName());
                 sb.append(mapper.writeValueAsString(map)).append(",");
                 map.clear();
             }
+
             sb.setLength(sb.length() - 1);
             sb.append("], \"success\": true,\"message\": \"Данные обновлены!\" }");
-            connection.close();
-        } catch (SQLException | JsonProcessingException e) {
+            transaction.commit();
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
         if (sb.toString().contains("name")) {
             return sb.toString();
         } else {
@@ -58,51 +53,44 @@ public class LastUsedDao implements DbConnectData {
         }
     }
 
-    public String addUsedToDB(String data) {
-        try {
-            dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("select name from useds");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String usedFromDB = resultSet.getString("name");
-                if (dfs.getName().equals(usedFromDB)) {
-                    return "{\"success\": false,\"message\": \"Данный интервал уже зарегестрирован!\"}";
-                }
+    public String save(LastUsed time, String name) {
+        Transaction transaction = session.beginTransaction();
+        List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed").list();
+
+        for (LastUsed interval : lastUseds) {
+            lastUsed = interval;
+
+            if (name.equals(lastUsed.getName())) {
+                transaction.commit();
+                return "{\"success\": false,\"message\": \"Данный интервал уже зарегестрирован!\"}";
             }
-            preparedStatement = connection.prepareStatement("insert into useds (name) VALUES (?)");
-            preparedStatement.setString(1, dfs.getName());
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return "{\"success\": true,\"message\": \"Навык добавлен!\"}";
+
+        session.save(time);
+        transaction.commit();
+        return "{\"success\": true,\"message\": \"Интервал добавлен!\"}";
     }
 
-    public String deleteUsedFromDB(String data) {
-        try {
-            dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from useds * where id = ?");
-            preparedStatement.setInt(1, dfs.getId());
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            return "{\"success\": false,\"message\": \"Вы не можете удалить данный интервал, так как он используется в таблице знаний сотрудников!\"}";
-        }
+    public String delete(String id) {
+    try {
+        transaction = session.beginTransaction();
+        LastUsed lUsed = session.load(LastUsed.class, Integer.parseInt(id));
+        session.delete(lUsed);
+        transaction.commit();
+    } catch(Exception e){
+        return "{\"success\": false,\"message\": \"Вы не можете удалить данный интервал, так как он используется в таблице знаний сотрудников!\"}";
+    }
         return "{\"success\": true,\"message\": \"Интервал удален!\"}";
+
     }
 
-    public String updateUseddataToDB(String data) {
-        try {
-            dfs.dataInitilization(data);
-            PreparedStatement preparedStatement = connection.prepareStatement("update useds set name = ? where id = ?");
-            preparedStatement.setString(1, dfs.getName());
-            preparedStatement.setInt(2, dfs.getId());
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public String updateData(String name, String id) {
+        transaction = session.beginTransaction();
+        LastUsed lUsed = session.get(LastUsed.class, Integer.parseInt(id));
+        lUsed.setName(name);
+        session.update(lUsed);
+        transaction.commit();
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
+
 }

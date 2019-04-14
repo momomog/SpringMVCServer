@@ -2,17 +2,13 @@ package system.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import system.model.Skill;
 import system.service.SkillService;
 
 @Controller
 @RequestMapping(value = "/skills", produces = "text/plain;charset=UTF-8")
 @CrossOrigin(origins = "http://localhost:1841")
-@SuppressWarnings("all")
 public class SkillController {
 
     @Autowired
