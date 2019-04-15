@@ -15,8 +15,8 @@ public class LastUsedService {
         return lastUsedDao.update();
     }
 
-    public String save(LastUsed lastUsed, String name){
-        return lastUsedDao.save(lastUsed, name);
+    public String save(LastUsed lastUsed){
+        return lastUsedDao.save(lastUsed);
     }
 
     public String delete(String id){

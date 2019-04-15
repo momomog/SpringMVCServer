@@ -15,8 +15,8 @@ public class TechService {
         return techDao.update();
     }
 
-    public String save(Technology technology, String name){
-        return techDao.save(technology, name);
+    public String save(Technology technology){
+        return techDao.save(technology);
     }
 
     public String delete(String id){

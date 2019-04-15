@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
 import system.model.LastUsed;
 import system.util.HibernateSessionFactoryUtil;
@@ -53,14 +52,14 @@ public class LastUsedDao {
         }
     }
 
-    public String save(LastUsed time, String name) {
+    public String save(LastUsed time) {
         Transaction transaction = session.beginTransaction();
         List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed").list();
 
         for (LastUsed interval : lastUseds) {
             lastUsed = interval;
 
-            if (name.equals(lastUsed.getName())) {
+            if (time.getName().equals(lastUsed.getName())) {
                 transaction.commit();
                 return "{\"success\": false,\"message\": \"Данный интервал уже зарегестрирован!\"}";
             }

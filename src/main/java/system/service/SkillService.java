@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import system.dao.SkillDao;
 import system.model.Skill;
 
+
+
 @Service
 public class SkillService {
 
@@ -15,8 +17,8 @@ public class SkillService {
         return skillDao.update();
     }
 
-    public String save(Skill skill, String name) {
-        return skillDao.save(skill, name);
+    public String save(Skill skill) {
+        return skillDao.save(skill);
     }
 
     public String delete(String id) {

@@ -23,7 +23,7 @@ public class SkillController {
     @RequestMapping("/add")
     @ResponseBody
     public String addTechnology(@RequestParam String name) {
-        return skillService.save(new Skill(name), name);
+        return skillService.save(new Skill(name));
     }
 
     @RequestMapping("/delete")

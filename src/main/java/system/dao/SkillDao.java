@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import system.model.Skill;
 import system.util.HibernateSessionFactoryUtil;
 
-import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,7 @@ public class SkillDao {
     private Map<String, String> map = new HashMap<>();
     private Skill skill;
 
+
     {
         session = HibernateSessionFactoryUtil.getCurrentSession();
     }
@@ -29,6 +29,7 @@ public class SkillDao {
     public String update() {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
+        
         try {
             List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
             sb.append("{\"skills\":[");
@@ -56,14 +57,14 @@ public class SkillDao {
     }
 
     //@Transactional
-    public String save(Skill skillType, String name) {
+    public String save(Skill skillType) {
         Transaction transaction = session.beginTransaction();
         List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
 
         for (Skill skillObject : skills) {
             skill = skillObject;
 
-            if (name.equals(skill.getName())) {
+            if (skillType.getName().equals(skill.getName())) {
                 transaction.commit();
                 return "{\"success\": false,\"message\": \"Данный навык уже зарегестрирован!\"}";
             }

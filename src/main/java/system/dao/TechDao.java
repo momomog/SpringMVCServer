@@ -54,14 +54,14 @@ public class TechDao {
         }
     }
 
-    public String save(Technology technology, String name) {
+    public String save(Technology technology) {
         Transaction transaction = session.beginTransaction();
         List<Technology> technologies = (List<Technology>) session.createQuery("From Technology").list();
 
         for (Technology technology1 : technologies) {
             tech = technology1;
 
-            if (name.equals(tech.getName())) {
+            if (technology.getName().equals(tech.getName())) {
                 transaction.commit();
                 return "{\"success\": false,\"message\": \"Данная технология уже зарегестрирована!\"}";
             }

@@ -2,18 +2,24 @@ package system.util;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import system.model.*;
 
+import javax.annotation.Resource;
+
+@Resource
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibernateSessionFactoryUtil {
-    private static SessionFactory sessionFactory;
-    private static Session session;
+    private static SessionFactory sessionFactory = null;
+    private static Session session = null;
 
     private HibernateSessionFactoryUtil() {
     }
 
-    public static SessionFactory getSession() {
+    private static SessionFactory getSession() {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration().configure();

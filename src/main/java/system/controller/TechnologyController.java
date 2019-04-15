@@ -24,7 +24,7 @@ public class TechnologyController {
     @RequestMapping("/add")
     @ResponseBody
     public String addTechnology(@RequestParam String name) {
-        return techService.save(new Technology(name), name);
+        return techService.save(new Technology(name));
     }
 
     @RequestMapping("/delete")

@@ -23,7 +23,7 @@ public class LastUsedController {
     @RequestMapping("/add")
     @ResponseBody
     public String addInterval(@RequestParam String name) {
-        return lastUsedService.save(new LastUsed(name), name);
+        return lastUsedService.save(new LastUsed(name));
     }
 
     @RequestMapping("/delete")
