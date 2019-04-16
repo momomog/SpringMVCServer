@@ -13,11 +13,7 @@
 </head>
 <body>
 
-    <spring:form modelAttribute="userFromServer" method="post" action="/spring/users/check">
-        <spring:input path="name"/>
-        <spring:input path="password"/>
-        <spring:button>check user</spring:button>
-    </spring:form>
+    <h1>reg</h1>
 
 </body>
 </html>

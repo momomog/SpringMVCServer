@@ -62,12 +62,12 @@ public class UserDao {
             user = currentUser;
 
             if (email.equals(user.getEmail())) {
-                transaction.commit();
+                transaction.rollback();
                 return "{\"success\": false,\"message\": \"Пользователь с данной почтой уже зарегестрирован!\"}";
             }
 
             if (phone.equals(user.getPhone())) {
-                transaction.commit();
+                transaction.rollback();
                 return "{\"success\": false,\"message\": \"Пользователь с данным телефоном уже зарегестрирован!\"}";
             }
         }

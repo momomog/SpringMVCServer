@@ -60,7 +60,7 @@ public class LastUsedDao {
             lastUsed = interval;
 
             if (time.getName().equals(lastUsed.getName())) {
-                transaction.commit();
+                transaction.rollback();
                 return "{\"success\": false,\"message\": \"Данный интервал уже зарегестрирован!\"}";
             }
         }
@@ -71,16 +71,16 @@ public class LastUsedDao {
     }
 
     public String delete(String id) {
-    try {
-        transaction = session.beginTransaction();
-        LastUsed lUsed = session.load(LastUsed.class, Integer.parseInt(id));
-        session.delete(lUsed);
-        transaction.commit();
-    } catch(Exception e){
-        return "{\"success\": false,\"message\": \"Вы не можете удалить данный интервал, так как он используется в таблице знаний сотрудников!\"}";
-    }
-        return "{\"success\": true,\"message\": \"Интервал удален!\"}";
-
+        try {
+            transaction = session.beginTransaction();
+            LastUsed lUsed = session.load(LastUsed.class, Integer.parseInt(id));
+            session.delete(lUsed);
+            transaction.commit();
+            return "{\"success\": true,\"message\": \"Интервал удален!\"}";
+        } catch (Exception e) {
+            transaction.rollback();
+            return "{\"success\": false,\"message\": \"Вы не можете удалить данный интервал, так как он используется в таблице знаний сотрудников!\"}";
+        }
     }
 
     public String updateData(String name, String id) {

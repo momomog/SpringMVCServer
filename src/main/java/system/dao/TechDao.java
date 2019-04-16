@@ -62,7 +62,7 @@ public class TechDao {
             tech = technology1;
 
             if (technology.getName().equals(tech.getName())) {
-                transaction.commit();
+                transaction.rollback();
                 return "{\"success\": false,\"message\": \"Данная технология уже зарегестрирована!\"}";
             }
         }
@@ -78,10 +78,11 @@ public class TechDao {
             Technology technology = session.load(Technology.class, Integer.parseInt(id));
             session.delete(technology);
             transaction.commit();
+            return "{\"success\": true,\"message\": \"Технология удалена!\"}";
         } catch (Exception e) {
+            transaction.rollback();
             return "{\"success\": false,\"message\": \"Вы не можете удалить данную технологию, так как она используется в таблице знаний сотрудников!\"}";
         }
-        return "{\"success\": true,\"message\": \"Технология удалена!\"}";
     }
 
     public String updateData(String name, String id) {

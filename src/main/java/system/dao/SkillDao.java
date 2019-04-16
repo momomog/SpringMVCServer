@@ -29,7 +29,7 @@ public class SkillDao {
     public String update() {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
-        
+
         try {
             List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
             sb.append("{\"skills\":[");
@@ -65,7 +65,7 @@ public class SkillDao {
             skill = skillObject;
 
             if (skillType.getName().equals(skill.getName())) {
-                transaction.commit();
+                transaction.rollback();
                 return "{\"success\": false,\"message\": \"Данный навык уже зарегестрирован!\"}";
             }
         }
@@ -81,10 +81,11 @@ public class SkillDao {
             Skill skill = session.load(Skill.class, Integer.parseInt(id));
             session.delete(skill);
             transaction.commit();
+            return "{\"success\": true,\"message\": \"Навык удален!\"}";
         } catch (Exception e) {
+            transaction.rollback();
             return "{\"success\": false,\"message\": \"Вы не можете удалить данный навык, так как он используется в таблице знаний сотрудников!\"}";
         }
-        return "{\"success\": true,\"message\": \"Навык удален!\"}";
     }
 
     public String updateData(String name, String id) {

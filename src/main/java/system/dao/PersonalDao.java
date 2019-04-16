@@ -60,7 +60,7 @@ public class PersonalDao {
 
         for (Personal personal : personals) {
             if (personal.getName() == Integer.parseInt(name) && personal.getTechnology() == Integer.parseInt(technology)) {
-                transaction.commit();
+                transaction.rollback();
                 return "{\"success\": false,\"message\": \"Данная технология для пользователя уже зарегестрирована!\"}";
             }
         }
