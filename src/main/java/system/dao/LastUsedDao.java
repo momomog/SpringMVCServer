@@ -27,7 +27,7 @@ public class LastUsedDao {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
         try {
-            List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed").list();
+            List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed u order by u.id").list();
             sb.append("{\"useds\":[");
 
             for (LastUsed interval : lastUseds) {
@@ -67,6 +67,7 @@ public class LastUsedDao {
 
         session.save(time);
         transaction.commit();
+        session.refresh(time);
         return "{\"success\": true,\"message\": \"Интервал добавлен!\"}";
     }
 
@@ -89,6 +90,7 @@ public class LastUsedDao {
         lUsed.setName(name);
         session.update(lUsed);
         transaction.commit();
+        session.refresh(lUsed);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
 

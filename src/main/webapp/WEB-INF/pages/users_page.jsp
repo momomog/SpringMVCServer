@@ -1,7 +1,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
 <%--
   Created by IntelliJ IDEA.
-  User: SFokin
+  UserInterface: SFokin
   Date: 11.04.2019
   Time: 16:24
   To change this template use File | Settings | File Templates.
@@ -12,6 +12,6 @@
     <title>Title</title>
 </head>
 <body>
-
+hello
 </body>
 </html>

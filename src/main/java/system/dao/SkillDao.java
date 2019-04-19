@@ -21,7 +21,6 @@ public class SkillDao {
     private Map<String, String> map = new HashMap<>();
     private Skill skill;
 
-
     {
         session = HibernateSessionFactoryUtil.getCurrentSession();
     }
@@ -31,7 +30,7 @@ public class SkillDao {
         Transaction transaction = session.beginTransaction();
 
         try {
-            List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
+            List<Skill> skills = (List<Skill>) session.createQuery("From Skill u order by u.id").list();
             sb.append("{\"skills\":[");
 
             for (Skill skillObject : skills) {
@@ -72,6 +71,7 @@ public class SkillDao {
 
         session.save(skillType);
         transaction.commit();
+        session.refresh(skillType);
         return "{\"success\": true,\"message\": \"Навык добавлен!\"}";
     }
 
@@ -94,6 +94,8 @@ public class SkillDao {
         skill.setName(name);
         session.update(skill);
         transaction.commit();
+        session.refresh(skill);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
+
 }

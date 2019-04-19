@@ -11,7 +11,7 @@ import system.model.*;
 import javax.annotation.Resource;
 
 @Resource
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory = null;
     private static Session session = null;

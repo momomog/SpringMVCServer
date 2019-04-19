@@ -27,7 +27,7 @@ public class UserDao {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
         try {
-            List<User> users = (List<User>) session.createQuery("From User").list();
+            List<User> users = (List<User>) session.createQuery("From User u order by u.id").list();
             sb.append("{\"users\":[");
 
             for (User currentUser : users) {
@@ -74,6 +74,7 @@ public class UserDao {
 
         session.save(currUser);
         transaction.commit();
+        session.refresh(currUser);
         return "{\"success\": true,\"message\": \"Пользователь добавлен!\"}";
     }
 
@@ -100,6 +101,7 @@ public class UserDao {
         user.setPhone(phone);
         session.update(user);
         transaction.commit();
+        session.refresh(user);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
 }

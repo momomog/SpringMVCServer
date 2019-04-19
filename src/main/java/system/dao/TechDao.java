@@ -29,7 +29,7 @@ public class TechDao {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
         try {
-            List<Technology> technologies = (List<Technology>) session.createQuery("From Technology").list();
+            List<Technology> technologies = (List<Technology>) session.createQuery("From Technology u order by u.id").list();
             sb.append("{\"technologies\":[");
 
             for (Technology technology : technologies) {
@@ -69,6 +69,7 @@ public class TechDao {
 
         session.save(technology);
         transaction.commit();
+        session.refresh(technology);
         return "{\"success\": true,\"message\": \"Технология добавлена!\"}";
     }
 
@@ -91,6 +92,7 @@ public class TechDao {
         technology.setName(name);
         session.update(technology);
         transaction.commit();
+        session.refresh(technology);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import system.model.Technology;
 import system.service.TechService;
 
-@Controller
+@RestController
 @RequestMapping(value = "/technologies", produces = "text/plain;charset=UTF-8")
 @CrossOrigin(origins = "http://localhost:1841")
 public class TechnologyController {
@@ -16,25 +16,21 @@ public class TechnologyController {
     private TechService techService;
 
     @RequestMapping(value = "/update")
-    @ResponseBody
     public String updateTechnology() {
         return techService.update();
     }
 
     @RequestMapping("/add")
-    @ResponseBody
     public String addTechnology(@RequestParam String name) {
         return techService.save(new Technology(name));
     }
 
     @RequestMapping("/delete")
-    @ResponseBody
     public String deleteTechnology(@RequestParam String id) {
         return techService.delete(id);
     }
 
     @RequestMapping("/updateData")
-    @ResponseBody
     public String updateTechnologyData(@RequestParam String name, String id) {
         return techService.updateData(name, id);
     }

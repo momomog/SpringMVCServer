@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import system.model.LastUsed;
 import system.service.LastUsedService;
 
-@Controller
+@RestController
 @RequestMapping(value = "/lastused", produces = "text/plain;charset=UTF-8")
 @CrossOrigin(origins = "http://localhost:1841")
 public class LastUsedController {
@@ -15,25 +15,21 @@ public class LastUsedController {
     private LastUsedService lastUsedService;
 
     @RequestMapping(value = "/update")
-    @ResponseBody
     public String updateInterval() {
         return lastUsedService.update();
     }
 
     @RequestMapping("/add")
-    @ResponseBody
     public String addInterval(@RequestParam String name) {
         return lastUsedService.save(new LastUsed(name));
     }
 
     @RequestMapping("/delete")
-    @ResponseBody
     public String deleteInterval(@RequestParam String id) {
         return lastUsedService.delete(id);
     }
 
     @RequestMapping("/updateData")
-    @ResponseBody
     public String updateIntervalData(@RequestParam String name, String id) {
         return lastUsedService.updateData(name, id);
     }
