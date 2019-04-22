@@ -1,38 +1,35 @@
-package system.controller;
+package com.system.springmvc.controller;
 
+import com.system.springmvc.model.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import system.model.Technology;
-import system.service.TechService;
+import com.system.springmvc.service.SkillService;
 
 @RestController
-@RequestMapping(value = "/technologies", produces = "text/plain;charset=UTF-8")
+@RequestMapping(value = "/skills", produces = "text/plain;charset=UTF-8")
 @CrossOrigin(origins = "http://localhost:1841")
-public class TechnologyController {
+public class SkillController {
 
     @Autowired
-    private TechService techService;
+    private SkillService skillService;
 
     @RequestMapping(value = "/update")
-    public String updateTechnology() {
-        return techService.update();
+    public String updateSkill() {
+        return skillService.update();
     }
 
     @RequestMapping("/add")
     public String addTechnology(@RequestParam String name) {
-        return techService.save(new Technology(name));
+        return skillService.save(new Skill(name));
     }
 
     @RequestMapping("/delete")
     public String deleteTechnology(@RequestParam String id) {
-        return techService.delete(id);
+        return skillService.delete(id);
     }
 
     @RequestMapping("/updateData")
     public String updateTechnologyData(@RequestParam String name, String id) {
-        return techService.updateData(name, id);
+        return skillService.updateData(name, id);
     }
-
 }

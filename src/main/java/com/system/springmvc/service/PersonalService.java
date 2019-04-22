@@ -1,8 +1,8 @@
-package system.service;
+package com.system.springmvc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import system.dao.PersonalDao;
+import com.system.springmvc.dao.PersonalDao;
 
 @Service
 public class PersonalService {

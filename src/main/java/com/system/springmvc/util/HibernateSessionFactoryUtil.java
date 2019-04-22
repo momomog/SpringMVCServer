@@ -1,17 +1,17 @@
-package system.util;
+package com.system.springmvc.util;
 
+import com.system.springmvc.model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import system.model.*;
 
 import javax.annotation.Resource;
 
 @Resource
-//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory = null;
     private static Session session = null;

@@ -1,9 +1,9 @@
-package system.controller;
+package com.system.springmvc.controller;
 
+import com.system.springmvc.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import system.model.User;
-import system.service.UserService;
+import com.system.springmvc.service.UserService;
 
 @RestController
 @RequestMapping(value = "/users", produces = "text/plain;charset=UTF-8")

@@ -1,4 +1,4 @@
-package system.configuration;
+package com.system.springmvc.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan("system")
+@ComponentScan(basePackages = "com.system.springmvc")
 public class WebConfig implements WebMvcConfigurer {
 
     @Override

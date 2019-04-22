@@ -1,13 +1,13 @@
-package system.dao;
+package com.system.springmvc.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.system.springmvc.model.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
-import system.model.Personal;
-import system.model.User;
-import system.util.HibernateSessionFactoryUtil;
+import com.system.springmvc.model.Personal;
+import com.system.springmvc.util.HibernateSessionFactoryUtil;
 
 import java.util.*;
 

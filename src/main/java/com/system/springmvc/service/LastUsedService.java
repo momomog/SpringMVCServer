@@ -1,9 +1,9 @@
-package system.service;
+package com.system.springmvc.service;
 
+import com.system.springmvc.dao.LastUsedDao;
+import com.system.springmvc.model.LastUsed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import system.dao.LastUsedDao;
-import system.model.LastUsed;
 
 @Service
 public class LastUsedService {

@@ -1,12 +1,12 @@
-package system.dao;
+package com.system.springmvc.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
-import system.model.Skill;
-import system.util.HibernateSessionFactoryUtil;
+import com.system.springmvc.model.Technology;
+import com.system.springmvc.util.HibernateSessionFactoryUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +14,12 @@ import java.util.Map;
 
 @Repository
 @SuppressWarnings("all")
-public class SkillDao {
+public class TechDao {
     private Session session;
     private Transaction transaction;
     private ObjectMapper mapper = new ObjectMapper();
     private Map<String, String> map = new HashMap<>();
-    private Skill skill;
+    private Technology tech;
 
     {
         session = HibernateSessionFactoryUtil.getCurrentSession();
@@ -28,15 +28,14 @@ public class SkillDao {
     public String update() {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
-
         try {
-            List<Skill> skills = (List<Skill>) session.createQuery("From Skill u order by u.id").list();
-            sb.append("{\"skills\":[");
+            List<Technology> technologies = (List<Technology>) session.createQuery("From Technology u order by u.id").list();
+            sb.append("{\"technologies\":[");
 
-            for (Skill skillObject : skills) {
-                skill = skillObject;
-                map.put("id", String.valueOf(skill.getId()));
-                map.put("name", skill.getName());
+            for (Technology technology : technologies) {
+                tech = technology;
+                map.put("id", String.valueOf(tech.getId()));
+                map.put("name", tech.getName());
                 sb.append(mapper.writeValueAsString(map)).append(",");
                 map.clear();
             }
@@ -55,47 +54,45 @@ public class SkillDao {
         }
     }
 
-    //@Transactional
-    public String save(Skill skillType) {
+    public String save(Technology technology) {
         Transaction transaction = session.beginTransaction();
-        List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
+        List<Technology> technologies = (List<Technology>) session.createQuery("From Technology").list();
 
-        for (Skill skillObject : skills) {
-            skill = skillObject;
+        for (Technology technology1 : technologies) {
+            tech = technology1;
 
-            if (skillType.getName().equals(skill.getName())) {
+            if (technology.getName().equals(tech.getName())) {
                 transaction.rollback();
-                return "{\"success\": false,\"message\": \"Данный навык уже зарегестрирован!\"}";
+                return "{\"success\": false,\"message\": \"Данная технология уже зарегестрирована!\"}";
             }
         }
 
-        session.save(skillType);
+        session.save(technology);
         transaction.commit();
-        session.refresh(skillType);
-        return "{\"success\": true,\"message\": \"Навык добавлен!\"}";
+        session.refresh(technology);
+        return "{\"success\": true,\"message\": \"Технология добавлена!\"}";
     }
 
     public String delete(String id) {
         try {
             transaction = session.beginTransaction();
-            Skill skill = session.load(Skill.class, Integer.parseInt(id));
-            session.delete(skill);
+            Technology technology = session.load(Technology.class, Integer.parseInt(id));
+            session.delete(technology);
             transaction.commit();
-            return "{\"success\": true,\"message\": \"Навык удален!\"}";
+            return "{\"success\": true,\"message\": \"Технология удалена!\"}";
         } catch (Exception e) {
             transaction.rollback();
-            return "{\"success\": false,\"message\": \"Вы не можете удалить данный навык, так как он используется в таблице знаний сотрудников!\"}";
+            return "{\"success\": false,\"message\": \"Вы не можете удалить данную технологию, так как она используется в таблице знаний сотрудников!\"}";
         }
     }
 
     public String updateData(String name, String id) {
         transaction = session.beginTransaction();
-        skill = session.get(Skill.class, Integer.parseInt(id));
-        skill.setName(name);
-        session.update(skill);
+        Technology technology = session.get(Technology.class, Integer.parseInt(id));
+        technology.setName(name);
+        session.update(technology);
         transaction.commit();
-        session.refresh(skill);
+        session.refresh(technology);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
-
 }

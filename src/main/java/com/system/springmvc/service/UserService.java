@@ -1,9 +1,9 @@
-package system.service;
+package com.system.springmvc.service;
 
+import com.system.springmvc.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import system.dao.UserDao;
-import system.model.User;
+import com.system.springmvc.dao.UserDao;
 
 @Service
 public class UserService {

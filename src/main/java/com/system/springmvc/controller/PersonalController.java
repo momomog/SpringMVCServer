@@ -1,9 +1,8 @@
-package system.controller;
+package com.system.springmvc.controller;
 
+import com.system.springmvc.service.PersonalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import system.service.PersonalService;
 
 @RestController
 @RequestMapping(value = "/personals", produces = "text/plain;charset=UTF-8")

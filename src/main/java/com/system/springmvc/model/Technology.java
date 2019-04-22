@@ -1,4 +1,4 @@
-package system.model;
+package com.system.springmvc.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,8 +6,8 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "useds")
-public class LastUsed {
+@Table(name = "technologies")
+public class Technology {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,13 +18,11 @@ public class LastUsed {
     @Setter
     private String name;
 
-    public LastUsed() {
+    public Technology() {
     }
 
-    public LastUsed(String name) {
+    public Technology(String name) {
         this.name = name;
     }
 
-
 }
-

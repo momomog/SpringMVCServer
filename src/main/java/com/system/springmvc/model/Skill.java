@@ -1,4 +1,4 @@
-package system.model;
+package com.system.springmvc.model;
 
 import lombok.Getter;
 import lombok.Setter;

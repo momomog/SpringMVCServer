@@ -1,10 +1,9 @@
-package system.controller;
+package com.system.springmvc.controller;
 
+import com.system.springmvc.model.LastUsed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import system.model.LastUsed;
-import system.service.LastUsedService;
+import com.system.springmvc.service.LastUsedService;
 
 @RestController
 @RequestMapping(value = "/lastused", produces = "text/plain;charset=UTF-8")

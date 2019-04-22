@@ -1,23 +1,25 @@
-package system.dao;
+package com.system.springmvc.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
-import system.model.LastUsed;
-import system.util.HibernateSessionFactoryUtil;
+import com.system.springmvc.model.Skill;
+import com.system.springmvc.util.HibernateSessionFactoryUtil;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @SuppressWarnings("all")
-public class LastUsedDao {
+public class SkillDao {
     private Session session;
     private Transaction transaction;
     private ObjectMapper mapper = new ObjectMapper();
     private Map<String, String> map = new HashMap<>();
-    private LastUsed lastUsed;
+    private Skill skill;
 
     {
         session = HibernateSessionFactoryUtil.getCurrentSession();
@@ -26,14 +28,15 @@ public class LastUsedDao {
     public String update() {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
-        try {
-            List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed u order by u.id").list();
-            sb.append("{\"useds\":[");
 
-            for (LastUsed interval : lastUseds) {
-                lastUsed = interval;
-                map.put("id", String.valueOf(lastUsed.getId()));
-                map.put("name", lastUsed.getName());
+        try {
+            List<Skill> skills = (List<Skill>) session.createQuery("From Skill u order by u.id").list();
+            sb.append("{\"skills\":[");
+
+            for (Skill skillObject : skills) {
+                skill = skillObject;
+                map.put("id", String.valueOf(skill.getId()));
+                map.put("name", skill.getName());
                 sb.append(mapper.writeValueAsString(map)).append(",");
                 map.clear();
             }
@@ -52,45 +55,46 @@ public class LastUsedDao {
         }
     }
 
-    public String save(LastUsed time) {
+    //@Transactional
+    public String save(Skill skillType) {
         Transaction transaction = session.beginTransaction();
-        List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed").list();
+        List<Skill> skills = (List<Skill>) session.createQuery("From Skill").list();
 
-        for (LastUsed interval : lastUseds) {
-            lastUsed = interval;
+        for (Skill skillObject : skills) {
+            skill = skillObject;
 
-            if (time.getName().equals(lastUsed.getName())) {
+            if (skillType.getName().equals(skill.getName())) {
                 transaction.rollback();
-                return "{\"success\": false,\"message\": \"Данный интервал уже зарегестрирован!\"}";
+                return "{\"success\": false,\"message\": \"Данный навык уже зарегестрирован!\"}";
             }
         }
 
-        session.save(time);
+        session.save(skillType);
         transaction.commit();
-        session.refresh(time);
-        return "{\"success\": true,\"message\": \"Интервал добавлен!\"}";
+        session.refresh(skillType);
+        return "{\"success\": true,\"message\": \"Навык добавлен!\"}";
     }
 
     public String delete(String id) {
         try {
             transaction = session.beginTransaction();
-            LastUsed lUsed = session.load(LastUsed.class, Integer.parseInt(id));
-            session.delete(lUsed);
+            Skill skill = session.load(Skill.class, Integer.parseInt(id));
+            session.delete(skill);
             transaction.commit();
-            return "{\"success\": true,\"message\": \"Интервал удален!\"}";
+            return "{\"success\": true,\"message\": \"Навык удален!\"}";
         } catch (Exception e) {
             transaction.rollback();
-            return "{\"success\": false,\"message\": \"Вы не можете удалить данный интервал, так как он используется в таблице знаний сотрудников!\"}";
+            return "{\"success\": false,\"message\": \"Вы не можете удалить данный навык, так как он используется в таблице знаний сотрудников!\"}";
         }
     }
 
     public String updateData(String name, String id) {
         transaction = session.beginTransaction();
-        LastUsed lUsed = session.get(LastUsed.class, Integer.parseInt(id));
-        lUsed.setName(name);
-        session.update(lUsed);
+        skill = session.get(Skill.class, Integer.parseInt(id));
+        skill.setName(name);
+        session.update(skill);
         transaction.commit();
-        session.refresh(lUsed);
+        session.refresh(skill);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
 

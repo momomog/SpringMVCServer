@@ -1,25 +1,23 @@
-package system.dao;
+package com.system.springmvc.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.system.springmvc.model.LastUsed;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
-import system.model.Technology;
-import system.util.HibernateSessionFactoryUtil;
+import com.system.springmvc.util.HibernateSessionFactoryUtil;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @SuppressWarnings("all")
-public class TechDao {
+public class LastUsedDao {
     private Session session;
     private Transaction transaction;
     private ObjectMapper mapper = new ObjectMapper();
     private Map<String, String> map = new HashMap<>();
-    private Technology tech;
+    private LastUsed lastUsed;
 
     {
         session = HibernateSessionFactoryUtil.getCurrentSession();
@@ -29,13 +27,13 @@ public class TechDao {
         StringBuilder sb = new StringBuilder();
         Transaction transaction = session.beginTransaction();
         try {
-            List<Technology> technologies = (List<Technology>) session.createQuery("From Technology u order by u.id").list();
-            sb.append("{\"technologies\":[");
+            List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed u order by u.id").list();
+            sb.append("{\"useds\":[");
 
-            for (Technology technology : technologies) {
-                tech = technology;
-                map.put("id", String.valueOf(tech.getId()));
-                map.put("name", tech.getName());
+            for (LastUsed interval : lastUseds) {
+                lastUsed = interval;
+                map.put("id", String.valueOf(lastUsed.getId()));
+                map.put("name", lastUsed.getName());
                 sb.append(mapper.writeValueAsString(map)).append(",");
                 map.clear();
             }
@@ -54,45 +52,46 @@ public class TechDao {
         }
     }
 
-    public String save(Technology technology) {
+    public String save(LastUsed time) {
         Transaction transaction = session.beginTransaction();
-        List<Technology> technologies = (List<Technology>) session.createQuery("From Technology").list();
+        List<LastUsed> lastUseds = (List<LastUsed>) session.createQuery("From LastUsed").list();
 
-        for (Technology technology1 : technologies) {
-            tech = technology1;
+        for (LastUsed interval : lastUseds) {
+            lastUsed = interval;
 
-            if (technology.getName().equals(tech.getName())) {
+            if (time.getName().equals(lastUsed.getName())) {
                 transaction.rollback();
-                return "{\"success\": false,\"message\": \"Данная технология уже зарегестрирована!\"}";
+                return "{\"success\": false,\"message\": \"Данный интервал уже зарегестрирован!\"}";
             }
         }
 
-        session.save(technology);
+        session.save(time);
         transaction.commit();
-        session.refresh(technology);
-        return "{\"success\": true,\"message\": \"Технология добавлена!\"}";
+        session.refresh(time);
+        return "{\"success\": true,\"message\": \"Интервал добавлен!\"}";
     }
 
     public String delete(String id) {
         try {
             transaction = session.beginTransaction();
-            Technology technology = session.load(Technology.class, Integer.parseInt(id));
-            session.delete(technology);
+            LastUsed lUsed = session.load(LastUsed.class, Integer.parseInt(id));
+            session.delete(lUsed);
             transaction.commit();
-            return "{\"success\": true,\"message\": \"Технология удалена!\"}";
+            return "{\"success\": true,\"message\": \"Интервал удален!\"}";
         } catch (Exception e) {
             transaction.rollback();
-            return "{\"success\": false,\"message\": \"Вы не можете удалить данную технологию, так как она используется в таблице знаний сотрудников!\"}";
+            return "{\"success\": false,\"message\": \"Вы не можете удалить данный интервал, так как он используется в таблице знаний сотрудников!\"}";
         }
     }
 
     public String updateData(String name, String id) {
         transaction = session.beginTransaction();
-        Technology technology = session.get(Technology.class, Integer.parseInt(id));
-        technology.setName(name);
-        session.update(technology);
+        LastUsed lUsed = session.get(LastUsed.class, Integer.parseInt(id));
+        lUsed.setName(name);
+        session.update(lUsed);
         transaction.commit();
-        session.refresh(technology);
+        session.refresh(lUsed);
         return "{\"success\": true,\"message\": \"Данные изменены!\"}";
     }
+
 }
